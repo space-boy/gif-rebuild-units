@@ -1,7 +1,9 @@
 package com.sunapp.gifwid.gifwid;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,14 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class AutoSearchFragment extends Fragment {
 
     private static final String TAG = "AutoSearchFr";
-    private static final String GIF_ARRAY_KEY = "com.sunapp.gifwid.gifwid.ARRAY_KEY";
     private ArrayList<GifMeta> mGifMetaArrayList;
     private RecyclerView mRecyclerView;
 
@@ -43,24 +46,34 @@ public class AutoSearchFragment extends Fragment {
         mRecyclerView = (RecyclerView) v.findViewById(R.id.auto_list_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(new GifListAdapter(mGifMetaArrayList));
+
         return v;
     }
 
-    class GifMetaViewHolder extends RecyclerView.ViewHolder {
+    class GifMetaViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private GifMeta mGifMeta;
-        private TextView mPathTextview;
+        private TextView mPathTextView;
+        private ImageView mIconImage;
+
 
         public GifMetaViewHolder(View itemView) {
             super(itemView);
-            mPathTextview = (TextView) itemView.findViewById(R.id.auto_list_textview);
+            mPathTextView = (TextView) itemView.findViewById(R.id.auto_list_textview);
+            mIconImage = (ImageView) itemView.findViewById(R.id.img_preview);
 
+            itemView.setOnClickListener(this);
         }
 
         public void onBind(GifMeta gifMeta){
             mGifMeta = gifMeta;
-            mPathTextview.setText(mGifMeta.getFileName());
+            mPathTextView.setText(mGifMeta.getFileName());
 
+        }
+
+        @Override
+        public void onClick(View v) {
+            //start new activity
         }
     }
 
@@ -69,15 +82,13 @@ public class AutoSearchFragment extends Fragment {
         private ArrayList<GifMeta> mGifMetaArrayListAdapter;
 
         public GifListAdapter(ArrayList<GifMeta> gifMetaList){
-
             mGifMetaArrayListAdapter = gifMetaList;
-
         }
 
         @Override
         public GifMetaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            View v = getActivity().getLayoutInflater().inflate(R.layout.auto_list_item,parent,false);
+            View v = getActivity().getLayoutInflater().inflate(R.layout.auto_list_item, parent, false);
 
             return new GifMetaViewHolder(v);
         }
@@ -85,6 +96,19 @@ public class AutoSearchFragment extends Fragment {
         @Override
         public void onBindViewHolder(GifMetaViewHolder holder, int position) {
             holder.onBind(mGifMetaArrayListAdapter.get(position));
+
+            int mWidth = holder.mIconImage.getWidth();
+            int mHeight = holder.mIconImage.getHeight();
+
+            if(mWidth == 0)
+                mWidth = 120;
+
+            if(mHeight == 0)
+                mWidth = 120;
+
+            GifMeta gm = mGifMetaArrayList.get(position);
+            new DecodeBitmapTask(holder.mIconImage,mWidth,mHeight).execute(gm.getFileName());
+
         }
 
         @Override
@@ -93,4 +117,65 @@ public class AutoSearchFragment extends Fragment {
         }
     }
 
+    public static Bitmap decodeSampledBitmapFromResource(String filepath,
+                                                         int reqWidth, int reqHeight) {
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filepath, options);
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(filepath, options);
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    class DecodeBitmapTask extends AsyncTask<String,Void,Bitmap>{
+
+        private final WeakReference<ImageView> weakReferenceImageView;
+        private int mWidth;
+        private int mHeight;
+
+        public DecodeBitmapTask(ImageView imageview, int width, int height){
+            weakReferenceImageView = new WeakReference<>(imageview);
+            mWidth = width;
+            mHeight = height;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            return decodeSampledBitmapFromResource(params[0],mWidth,mHeight);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if (weakReferenceImageView != null && bitmap != null) {
+                final ImageView imageView = weakReferenceImageView.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }
+        }
+    }
 }

@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FDD135</color>
-    <color name="colorPrimaryDark">#FBB92D</color>
+    <color name="colorPrimary">#FDCB35</color>
+    <color name="colorPrimaryDark">#FFB92D</color>
     <color name="colorAccent">#303F9F</color>
     <color name="cobalt_grey">#D1D1D1</color>
+
+    <!-- old toolbar colours
+     FBB92D
+     FDD135
+     !-->
 
 </resources>

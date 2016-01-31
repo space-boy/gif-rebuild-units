@@ -15,20 +15,15 @@ public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
     public static ArrayList<GifMeta> mGifMetaArrayList;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_activity);
 
-        if(mGifMetaArrayList == null)
-            new FileSearchTask().execute();
+        setTitle(R.string.search_results);
 
-//        if(savedInstanceState == null){
-//            FragmentManager fm = getSupportFragmentManager();
-//            AutoSearchFragment asf = AutoSearchFragment.newInstance();
-//            fm.beginTransaction().add(R.id.fragment_container_search,asf).commit();
-//        }
+        if(savedInstanceState == null)
+            new FileSearchTask().execute();
 
     }
 
