@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Gif Widget</string>
+    <string name="create_gif">Create Gif</string>
+    <string name="search">Search Files</string>
+    <string name="auto_search">Auto Search</string>
+    <string name="manual_search">Manual Search</string>
+    <string name="no_activity">No gallery app could be found to display images</string>
+    <string name="search_image_icon">small image icon</string>
+</resources>
