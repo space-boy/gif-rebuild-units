@@ -2,12 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:gravity="top|center_vertical"
+    android:layout_margin="5dp">
 
     <RelativeLayout
         android:id="@+id/gif_widgets_holder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:layout_margin="5dp">
+
+        <include android:id="@+id/gif_view_1"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_margin="5dp"
+                 layout="@layout/gif_widget_home_item"/>
+
+        <include android:id="@+id/gif_view_2"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_below="@id/gif_view_1"
+                 android:layout_margin="5dp"
+                 layout="@layout/gif_widget_home_item"/>
+
+        <include android:id="@+id/gif_view_3"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_below="@id/gif_view_1"
+                 android:layout_toRightOf="@id/gif_view_2"
+                 android:layout_toEndOf="@id/gif_view_2"
+                 android:layout_margin="5dp"
+                 layout="@layout/gif_widget_home_item"/>
 
     </RelativeLayout>
 
@@ -16,5 +43,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/create_gif"/>
+
+    <Button
+        android:id="@+id/delete_gif_button_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_gif"/>
 
 </LinearLayout>
