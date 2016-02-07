@@ -1,13 +1,17 @@
 package com.sunapp.gifwid.gifwid;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +24,12 @@ import java.util.ArrayList;
 public class AutoSearchFragment extends Fragment {
 
     private static final String TAG = "AutoSearchFr";
+    public static final String FILE_PATH_KEY = "AutoSearchFragment.FILE_PATH_KEY";
     private ArrayList<GifMeta> mGifMetaArrayList;
     private RecyclerView mRecyclerView;
 
     public static AutoSearchFragment newInstance() {
-
         Bundle args = new Bundle();
-
         AutoSearchFragment fragment = new AutoSearchFragment();
         fragment.setArguments(args);
         return fragment;
@@ -55,33 +58,35 @@ public class AutoSearchFragment extends Fragment {
         private GifMeta mGifMeta;
         private TextView mPathTextView;
         private ImageView mIconImage;
-
+        Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/RobotoSlab-Regular.ttf");
 
         public GifMetaViewHolder(View itemView) {
             super(itemView);
             mPathTextView = (TextView) itemView.findViewById(R.id.auto_list_textview);
             mIconImage = (ImageView) itemView.findViewById(R.id.img_preview);
-
             itemView.setOnClickListener(this);
         }
 
-        public void onBind(GifMeta gifMeta){
+        public void onBind(GifMeta gifMeta) {
             mGifMeta = gifMeta;
             mPathTextView.setText(mGifMeta.getFileName());
-
+            mPathTextView.setTypeface(tf);
         }
 
         @Override
         public void onClick(View v) {
-            //start new activity
+            Intent i = new Intent();
+            i.putExtra(FILE_PATH_KEY,mGifMeta.getFileName());
+            getActivity().setResult(Activity.RESULT_OK,i);
+            getActivity().finish();
         }
     }
 
-    class GifListAdapter extends RecyclerView.Adapter<GifMetaViewHolder>{
+    class GifListAdapter extends RecyclerView.Adapter<GifMetaViewHolder> {
 
         private ArrayList<GifMeta> mGifMetaArrayListAdapter;
 
-        public GifListAdapter(ArrayList<GifMeta> gifMetaList){
+        public GifListAdapter(ArrayList<GifMeta> gifMetaList) {
             mGifMetaArrayListAdapter = gifMetaList;
         }
 
@@ -100,14 +105,14 @@ public class AutoSearchFragment extends Fragment {
             int mWidth = holder.mIconImage.getWidth();
             int mHeight = holder.mIconImage.getHeight();
 
-            if(mWidth == 0)
+            if (mWidth == 0)
                 mWidth = 120;
 
-            if(mHeight == 0)
+            if (mHeight == 0)
                 mWidth = 120;
 
             GifMeta gm = mGifMetaArrayList.get(position);
-            new DecodeBitmapTask(holder.mIconImage,mWidth,mHeight).execute(gm.getFileName());
+            new DecodeBitmapTask(holder.mIconImage, mWidth, mHeight).execute(gm.getFileName());
 
         }
 
@@ -125,6 +130,7 @@ public class AutoSearchFragment extends Fragment {
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filepath, options);
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        Log.i(TAG,"sample size: " + options.inSampleSize);
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(filepath, options);
     }
@@ -149,13 +155,13 @@ public class AutoSearchFragment extends Fragment {
         return inSampleSize;
     }
 
-    class DecodeBitmapTask extends AsyncTask<String,Void,Bitmap>{
+    class DecodeBitmapTask extends AsyncTask<String, Void, Bitmap> {
 
         private final WeakReference<ImageView> weakReferenceImageView;
         private int mWidth;
         private int mHeight;
 
-        public DecodeBitmapTask(ImageView imageview, int width, int height){
+        public DecodeBitmapTask(ImageView imageview, int width, int height) {
             weakReferenceImageView = new WeakReference<>(imageview);
             mWidth = width;
             mHeight = height;
@@ -163,14 +169,14 @@ public class AutoSearchFragment extends Fragment {
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            return decodeSampledBitmapFromResource(params[0],mWidth,mHeight);
+            return decodeSampledBitmapFromResource(params[0], mWidth, mHeight);
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
 
-            if (weakReferenceImageView != null && bitmap != null) {
+            if (bitmap != null) {
                 final ImageView imageView = weakReferenceImageView.get();
                 if (imageView != null) {
                     imageView.setImageBitmap(bitmap);

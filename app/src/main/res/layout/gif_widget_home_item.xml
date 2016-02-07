@@ -1,18 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<android.support.v7.widget.CardView
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/home_cardview"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="5dp">
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/main_cardview_relativelayout"
+    android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/gif_widget_home_imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/cardview_image_main"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="fitXY"
+        android:layout_margin="10dp"
         android:contentDescription="@string/gif_widget_home_imageview"/>
 
     <TextView
-        android:id="@+id/gif_widget_desc_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:id="@+id/gif_widget_number_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/gif_widget_number"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@id/cardview_image_main"
+        android:layout_toEndOf="@id/cardview_image_main"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/frames_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/frame_count"
+        android:textSize="16sp"
+        android:layout_toRightOf="@id/cardview_image_main"
+        android:layout_toEndOf="@id/cardview_image_main"
+        android:layout_below="@id/gif_widget_number_text"/>
+
+    <TextView
+        android:id="@+id/refresh_rate_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/delay_count"
+        android:textSize="16sp"
+        android:layout_toRightOf="@id/cardview_image_main"
+        android:layout_toEndOf="@id/cardview_image_main"
+        android:layout_below="@id/frames_textview"/>
+
+    <TextView
+        android:id="@+id/active_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_toRightOf="@id/cardview_image_main"
+        android:layout_toEndOf="@id/cardview_image_main"
+        android:layout_below="@id/refresh_rate_textview"/>
+
+
+</RelativeLayout>
+
+</android.support.v7.widget.CardView>

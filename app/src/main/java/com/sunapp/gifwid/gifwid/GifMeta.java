@@ -7,10 +7,19 @@ public class GifMeta {
     private int mFrames;
     private int mRefreshRate;
     private boolean mIsActive;
+    private int mWidgetNo;
 
     //possibly override later
     public GifMeta(){
 
+    }
+
+    public int getWidgetNo() {
+        return mWidgetNo;
+    }
+
+    public void setWidgetNo(int widgetNo) {
+        mWidgetNo = widgetNo;
     }
 
     public String getFileName() {

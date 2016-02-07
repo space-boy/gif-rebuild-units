@@ -34,4 +34,8 @@ dependencies {
         useLibrary 'org.apache.http.legacy'
     }
     compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:cardview-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.github.clans:fab:1.6.2'
+
 }

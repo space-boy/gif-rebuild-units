@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -28,6 +29,12 @@ public class SearchPickerDialog extends DialogFragment {
     Button mManual;
     Button mAuto;
     public static final int REQUEST_MEDIA = 101;
+    public static final int SELECT_AUTO_GIF = 102;
+    public ReloadList searchReload;
+
+    public interface ReloadList{
+        void reloadGifList();
+    }
 
     @NonNull
     @Override
@@ -57,7 +64,9 @@ public class SearchPickerDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SearchActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, SELECT_AUTO_GIF);
+
+
             }
         });
 
@@ -65,6 +74,22 @@ public class SearchPickerDialog extends DialogFragment {
                 .setView(v)
               .setTitle(R.string.search)
               .create();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+
+        try {
+            searchReload = (ReloadList) getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement ReloadList");
+        }
+
     }
 
     private String resolveMediaUri(Uri uri) {
@@ -99,9 +124,20 @@ public class SearchPickerDialog extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG,"result thing code: " + resultCode);
 
         if (requestCode == REQUEST_MEDIA && resultCode == Activity.RESULT_OK)
             resolveMediaUri(data.getData());
+
+        if(requestCode == SELECT_AUTO_GIF && resultCode == Activity.RESULT_OK) {
+            Log.i(TAG, "activity was auto gif");
+
+            //create an interface to provide a callback to the hosting activity
+            searchReload.reloadGifList();
+
+            this.dismiss();
+
+        }
 
         //pass the resulting string into a new instance of DetailSetupActivity/DetailSetupFragment
     }

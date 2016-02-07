@@ -1,53 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_centerInParent="true"
-              android:gravity="top|center_vertical"
-    android:layout_margin="5dp">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:fab="http://schemas.android.com/apk/res-auto"
+             android:orientation="vertical"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_centerInParent="true"
+             android:background="@color/background_grey">
 
-    <RelativeLayout
-        android:id="@+id/gif_widgets_holder"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/gif_widget_recyclerview"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center|top"
-        android:layout_margin="5dp">
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
 
-        <include android:id="@+id/gif_view_1"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_margin="5dp"
-                 layout="@layout/gif_widget_home_item"/>
+    </android.support.v7.widget.RecyclerView>
 
-        <include android:id="@+id/gif_view_2"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_below="@id/gif_view_1"
-                 android:layout_margin="5dp"
-                 layout="@layout/gif_widget_home_item"/>
-
-        <include android:id="@+id/gif_view_3"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_below="@id/gif_view_1"
-                 android:layout_toRightOf="@id/gif_view_2"
-                 android:layout_toEndOf="@id/gif_view_2"
-                 android:layout_margin="5dp"
-                 layout="@layout/gif_widget_home_item"/>
-
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/create_gif_button_home"
-        android:layout_width="match_parent"
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create_gif"/>
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_more_vert_white_24dp"
+        fab:menu_labels_style="@style/MenuLabelsStyle"
+        fab:fab_showAnimation="@anim/show_from_bottom"
+        fab:fab_hideAnimation="@anim/hide_to_bottom"
+        fab:menu_animationDelayPerItem="0"
+        fab:menu_shadowColor="#444"
+        fab:menu_colorNormal="#FFB805"
+        fab:menu_colorPressed="#F2AB00"
+        fab:menu_colorRipple="#D99200">
 
-    <Button
-        android:id="@+id/delete_gif_button_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/delete_gif"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_delete_gif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_remove_white_24dp"
+            fab:fab_colorNormal="@color/red_primary"
+            fab:fab_colorPressed="@color/red_transit"
+            fab:fab_colorRipple="@color/red_finished"
+            fab:fab_label="@string/delete_gif"/>
 
-</LinearLayout>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_add_gif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_add_white_24dp"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:fab_colorPressed="@color/fab_ripp"
+            fab:fab_colorRipple="@color/fab_transit"
+            fab:fab_label="@string/create_gif"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+</FrameLayout>

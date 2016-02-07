@@ -9,14 +9,15 @@
         android:id="@+id/manual_search_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/manual_search"/>
+        android:text="@string/manual_search"
+        android:background="@android:color/transparent"/>
 
     <Button
         android:id="@+id/auto_search_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/auto_search"/>
-
-
+        android:text="@string/auto_search"
+        android:background="@android:color/transparent"
+        />
 
 </LinearLayout>
