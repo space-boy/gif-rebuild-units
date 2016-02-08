@@ -45,6 +45,7 @@ public class HomeFragment extends Fragment {
     private static String GIF_FRAME_KEY = "com.sunapp.gifwid.gifwid.FRAME";
     private static String GIF_DELAY_KEY = "com.sunapp.gifwid.gifwid.DELAY";
     private static String GIF_NUMBER_KEY = "com.sunapp.gifwid.gifwid.NUMBER";
+    private static final String DECODING_KEY = "com.sunapp.gifwid.gifwid.DECODING_FLAG";
 
 
     public interface UpdateMode {
@@ -62,9 +63,15 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null)
+            mDecoding = savedInstanceState.getBoolean(DECODING_KEY, false);
+
         mGifMetaArrayList = GifDataStore.get(getActivity()).getGifMetaArrayList();
-        findExistingWidgets();
-        
+
+        if(mGifMetaArrayList.size() == 0)
+            findExistingWidgets();
+
     }
 
     @Nullable
@@ -103,7 +110,7 @@ public class HomeFragment extends Fragment {
         fabAdd.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
+                //handle in a smarter way to let me know if the async task finished
                 if(mDecoding){
                     Toast.makeText(getActivity(),R.string.decoding_warn,Toast.LENGTH_SHORT).show();
                     return;
@@ -158,6 +165,20 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(DECODING_KEY, mDecoding);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        for(GifMeta gm :mGifMetaArrayList) {
+            updateSharedPrefs(gm);
+        }
+    }
+
     private void findExistingWidgets(){
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
@@ -197,9 +218,8 @@ public class HomeFragment extends Fragment {
         editor.apply();
     }
 
-
-
     private void updateSharedPrefs(GifMeta gm){
+
         int widgetno = gm.getWidgetNo();
         final String pathKey = GIF_PATH_KEY + String.valueOf(widgetno);
         final String frameKey = GIF_FRAME_KEY + String.valueOf(widgetno);
@@ -207,14 +227,15 @@ public class HomeFragment extends Fragment {
         final String numberKey = GIF_NUMBER_KEY + String.valueOf(widgetno);
         Log.i(TAG,"saving widno: " + widgetno);
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        SharedPreferences.Editor editor = pref.edit();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            SharedPreferences.Editor editor = pref.edit();
 
-        editor.putString(pathKey,gm.getFileName());
-        editor.putInt(frameKey, gm.getFrames());
-        editor.putInt(delayKey, gm.getRefreshRate());
-        editor.putInt(numberKey,gm.getWidgetNo());
-        editor.apply();
+            editor.putString(pathKey, gm.getFileName());
+            editor.putInt(frameKey, gm.getFrames());
+            editor.putInt(delayKey, gm.getRefreshRate());
+            editor.putInt(numberKey, gm.getWidgetNo());
+            editor.apply();
+
     }
 
     private class QuickDecodeGif extends AsyncTask<String, Void, Void> {
@@ -307,7 +328,6 @@ public class HomeFragment extends Fragment {
 
             gm.setWidgetNo(widgetNum);
             GifDataStore.get(getActivity()).getGifMetaArrayList().add(gm);
-            updateSharedPrefs(gm);
             mDecoding = false;
             mRecyclerView.setAdapter(new GifItemAdapter(mGifMetaArrayList));
         }
