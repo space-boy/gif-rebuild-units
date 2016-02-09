@@ -38,7 +38,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ArrayList<GifMeta> mGifMetaArrayList;
     private int mScrollOffset = 4;
-    private boolean mDecoding;
+    private static boolean sDecoding;
     private boolean mDeleteFlag;
     private UpdateMode mUpdateMode;
     private static String GIF_PATH_KEY = "com.sunapp.gifwid.gifwid.PATH";
@@ -51,6 +51,7 @@ public class HomeFragment extends Fragment {
     public interface UpdateMode {
         void BeginDeleteMode();
         void EndDeleteMode();
+        void HideDecodingSpinner();
     }
 
     public static HomeFragment newInstance() {
@@ -65,7 +66,7 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if(savedInstanceState != null)
-            mDecoding = savedInstanceState.getBoolean(DECODING_KEY, false);
+            sDecoding = savedInstanceState.getBoolean(DECODING_KEY, false);
 
         mGifMetaArrayList = GifDataStore.get(getActivity()).getGifMetaArrayList();
 
@@ -83,6 +84,9 @@ public class HomeFragment extends Fragment {
         mRecyclerView = (RecyclerView) v.findViewById(R.id.gif_widget_recyclerview);
         mRecyclerView.setAdapter(new GifItemAdapter(mGifMetaArrayList));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        if(sDecoding)
+           v.findViewById(R.id.decoding_spinner).setVisibility(View.VISIBLE);
 
         final FloatingActionMenu fam = (FloatingActionMenu) v.findViewById(R.id.fab_menu1);
         final FloatingActionButton fabAdd = (FloatingActionButton) v.findViewById(R.id.fab_add_gif);
@@ -111,7 +115,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //handle in a smarter way to let me know if the async task finished
-                if(mDecoding){
+                if(sDecoding){
                     Toast.makeText(getActivity(),R.string.decoding_warn,Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -161,14 +165,16 @@ public class HomeFragment extends Fragment {
         if(requestCode == SELECT_AUTO_GIF && resultCode == Activity.RESULT_OK){
             Log.i(TAG, "launching async decode");
             new QuickDecodeGif(120,120).execute(data.getStringExtra(AutoSearchFragment.FILE_PATH_KEY));
-            mDecoding = true;
+            sDecoding = true;
+            getActivity().findViewById(R.id.decoding_spinner).setVisibility(View.VISIBLE);
+
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(DECODING_KEY, mDecoding);
+        outState.putBoolean(DECODING_KEY, sDecoding);
     }
 
     @Override
@@ -238,6 +244,12 @@ public class HomeFragment extends Fragment {
 
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     private class QuickDecodeGif extends AsyncTask<String, Void, Void> {
 
         private int mDelayMs;
@@ -264,7 +276,14 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+            publishProgress();
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            mUpdateMode.HideDecodingSpinner();
         }
 
         public void avoidLint(){
@@ -328,8 +347,11 @@ public class HomeFragment extends Fragment {
 
             gm.setWidgetNo(widgetNum);
             GifDataStore.get(getActivity()).getGifMetaArrayList().add(gm);
-            mDecoding = false;
+            mUpdateMode.HideDecodingSpinner();
+            mGifMetaArrayList = GifDataStore.get(getActivity()).getGifMetaArrayList();
+            sDecoding = false;
             mRecyclerView.setAdapter(new GifItemAdapter(mGifMetaArrayList));
+
         }
     }
 

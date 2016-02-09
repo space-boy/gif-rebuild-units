@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -15,6 +16,7 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.Upda
 
     private static final String TAG = "HomeActivity";
     private Toolbar mToolbar;
+    NonUiTaskFragment NonUifragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,20 +26,16 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.Upda
         mToolbar.setTitle(R.string.app_name);
         mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 
-        if(Build.VERSION.SDK_INT >= 21){
+        if (Build.VERSION.SDK_INT >= 21) {
             mToolbar.setElevation(8);
         }
 
-        if(savedInstanceState == null){
-
-            FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
+        if (savedInstanceState == null) {
             Fragment homeFragment = HomeFragment.newInstance();
-
-            fm.beginTransaction().add(R.id.fragment_container_1,homeFragment).commit();
-
+            fm.beginTransaction().add(R.id.fragment_container_1, homeFragment).commit();
         }
     }
-
     @Override
     public void BeginDeleteMode() {
         if(mToolbar == null)
@@ -68,5 +66,10 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.Upda
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
+    }
+
+    @Override
+    public void HideDecodingSpinner() {
+        findViewById(R.id.decoding_spinner).setVisibility(View.INVISIBLE);
     }
 }

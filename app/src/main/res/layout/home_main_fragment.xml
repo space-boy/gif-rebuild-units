@@ -17,6 +17,14 @@
 
     </android.support.v7.widget.RecyclerView>
 
+    <ProgressBar
+        android:id="@+id/decoding_spinner"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_menu1"
         android:layout_width="wrap_content"
