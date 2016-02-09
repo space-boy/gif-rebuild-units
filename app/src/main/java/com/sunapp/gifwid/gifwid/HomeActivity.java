@@ -16,8 +16,7 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.Upda
 
     private static final String TAG = "HomeActivity";
     private Toolbar mToolbar;
-    NonUiTaskFragment NonUifragment;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
